@@ -55,6 +55,10 @@ export const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
+    // we can have this method in user model also
+    
+  //  const isPasswordCorrect = await user.matchPassword(password);
+  //   if (!isPasswordCorrect) return res.status(401).json({ message: "Invalid email or password" });
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
