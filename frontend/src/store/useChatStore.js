@@ -43,26 +43,57 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  subscribeToMessages: () => {
-    const { selectedUser } = get();
-    if (!selectedUser) return;
+  // subscribeToMessages: () => {
+  //   const { selectedUser } = get();
+  //   if (!selectedUser) return;
 
-    const socket = useAuthStore.getState().socket;
+  //   const socket = useAuthStore.getState().socket;
 
-    socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-      if (!isMessageSentFromSelectedUser) return;
+  //   socket.on("newMessage", (newMessage) => {
+  //     const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+  //     if (!isMessageSentFromSelectedUser) return;
 
-      set({
-        messages: [...get().messages, newMessage],
-      });
+  //     set({
+  //       messages: [...get().messages, newMessage],
+  //     });
+  //   });
+  // },
+
+  // unsubscribeFromMessages: () => {
+  //   const socket = useAuthStore.getState().socket;
+  //   socket.off("newMessage");
+  // },
+subscribeToMessages: () => {
+  const { selectedUser } = get();
+  if (!selectedUser) return;
+
+  const socket = useAuthStore.getState().socket;
+
+  // Handle new messages
+  socket.on("newMessage", (newMessage) => {
+    const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id || newMessage.receiverId === selectedUser._id;
+    if (!isMessageSentFromSelectedUser) return;
+
+    set({
+      messages: [...get().messages, newMessage],
     });
-  },
+  });
 
-  unsubscribeFromMessages: () => {
-    const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
-  },
+  // Handle updates to message status (e.g., scheduled message sent)
+  socket.on("updateMessageStatus", (updatedMessage) => {
+    set({
+      messages: get().messages.map((msg) =>
+        msg._id === updatedMessage._id ? updatedMessage : msg
+      ),
+    });
+  });
+},
+
+unsubscribeFromMessages: () => {
+  const socket = useAuthStore.getState().socket;
+  socket.off("newMessage");
+  socket.off("updateMessageStatus"); // remove listener to avoid memory leaks
+},
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));

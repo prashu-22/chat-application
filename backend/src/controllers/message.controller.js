@@ -21,12 +21,24 @@ export const getMessages = async (req, res) => {
     const { id: userToChatId } = req.params;
     const myId = req.user._id;
 
+    const currentTime = new Date();
+
     const messages = await Message.find({
       $or: [
+        // Messages sent by me
         { senderId: myId, receiverId: userToChatId },
-        { senderId: userToChatId, receiverId: myId },
+        // Messages sent to me by the other user, but only if scheduled time has arrived
+        {
+          senderId: userToChatId,
+          receiverId: myId,
+          $or: [
+            { scheduledFor: { $lte: currentTime } },
+            { status: "sent" },
+            { scheduledFor: { $exists: false } },
+          ],
+        },
       ],
-    });
+    }).sort({ createdAt: 1 }); // optional: sort by time ascending
 
     res.status(200).json(messages);
   } catch (error) {
@@ -35,15 +47,15 @@ export const getMessages = async (req, res) => {
   }
 };
 
+
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text, image, scheduledFor } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
 
     let imageUrl;
     if (image) {
-      // Upload base64 image to cloudinary
       const uploadResponse = await cloudinary.uploader.upload(image);
       imageUrl = uploadResponse.secure_url;
     }
@@ -53,13 +65,20 @@ export const sendMessage = async (req, res) => {
       receiverId,
       text,
       image: imageUrl,
+      scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
+      status: scheduledFor ? "pending" : "sent",
     });
 
     await newMessage.save();
 
-    const receiverSocketId = getReceiverSocketId(receiverId);
-    if (receiverSocketId) {
-      io.to(receiverSocketId).emit("newMessage", newMessage);
+    // Only emit immediately if it's not scheduled
+    console.log(scheduledFor,"scheduledFor")
+    if (!scheduledFor) {
+      console.log("Emitting immediately");
+      const receiverSocketId = getReceiverSocketId(receiverId);
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("newMessage", newMessage);
+      }
     }
 
     res.status(201).json(newMessage);
@@ -68,3 +87,4 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+

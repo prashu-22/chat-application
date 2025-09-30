@@ -18,6 +18,15 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+     scheduledFor: {
+    type: Date, // If null → send immediately
+    default: null,
+  },
+   status: {
+    type: String,
+    enum: ["pending", "sent"],
+    default: "sent",
+  },  
   },
   { timestamps: true }
 );

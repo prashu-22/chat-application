@@ -47,7 +47,7 @@ const ChatContainer = () => {
     <div className="flex-1 flex flex-col overflow-auto">
       <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 cursor-pointer">
         {messages.map((message) => (
           <div
             key={message._id}
@@ -80,6 +80,11 @@ const ChatContainer = () => {
                 />
               )}
               {message.text && <p>{message.text}</p>}
+               {message.status === "pending" && (
+    <span className="text-xs text-orange-500 mt-1">
+      ⏳ Scheduled for {new Date(message.scheduledFor).toLocaleString()}
+    </span>
+  )}
             </div>
           </div>
         ))}

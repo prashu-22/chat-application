@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [scheduledFor, setScheduledFor] = useState(""); // NEW
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
@@ -36,11 +37,13 @@ const MessageInput = () => {
       await sendMessage({
         text: text.trim(),
         image: imagePreview,
+        scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
       });
 
       // Clear form
       setText("");
       setImagePreview(null);
+       setScheduledFor(""); // clear schedule
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error("Failed to send message:", error);
@@ -92,6 +95,12 @@ const MessageInput = () => {
             <Image size={20} />
           </button>
         </div>
+         <input
+          type="datetime-local"
+          value={scheduledFor}
+          onChange={(e) => setScheduledFor(e.target.value)}
+          className="input input-bordered input-sm"
+        />
         <button
           type="submit"
           className="btn btn-sm btn-circle"
