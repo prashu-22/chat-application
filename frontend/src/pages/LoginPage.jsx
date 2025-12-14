@@ -110,7 +110,7 @@ const LoginPage = () => {
 
       {/* Right Side - Image/Pattern */}
       <AuthImagePattern
-        title={"Welcome back!"}
+        title={"I think its working CI/CD!"}
         subtitle={"Sign in to continue your conversations and catch up with your messages."}
       />
     </div>
