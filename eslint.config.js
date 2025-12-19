@@ -5,15 +5,26 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
+  // Frontend
   {
-    ignores: ["dist"],
     files: ["frontend/**/*.{js,jsx}"],
+    ignores: ["frontend/dist"],
     languageOptions: {
       ecmaVersion: 2020,
+      sourceType: "module",
       globals: globals.browser,
-      parserOptions: { ecmaVersion: "latest", sourceType: "module", ecmaFeatures: { jsx: true } },
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
     },
-    plugins: { react, "react-hooks": reactHooks, "react-refresh": reactRefresh },
+    settings: {
+      react: { version: "18.3" },
+    },
+    plugins: {
+      react,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
+    },
     rules: {
       ...js.configs.recommended.rules,
       ...react.configs.recommended.rules,
@@ -25,10 +36,17 @@ export default [
       "react/no-unescaped-entities": "off",
     },
   },
+
+  // Backend
   {
-    ignores: ["dist"],
     files: ["backend/**/*.js"],
-    languageOptions: { ecmaVersion: 2021, globals: globals.node },
-    rules: { ...js.configs.recommended.rules },
+    ignores: ["backend/dist"],
+    languageOptions: {
+      ecmaVersion: 2021,
+      globals: globals.node,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+    },
   },
 ];

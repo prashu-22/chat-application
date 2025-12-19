@@ -8,6 +8,7 @@
     "start": "npm run start --prefix backend",
     "format": "prettier --write .",
     "lint": "eslint \"frontend/**/*.{js,jsx}\" && eslint \"backend/**/*.js\""
+
   },
   "keywords": [],
   "author": "",
