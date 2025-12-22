@@ -5,6 +5,14 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default [
+     {
+    ignores: [
+      "frontend/dist/**",
+      "frontend/build/**",
+      "backend/dist/**",
+      "node_modules/**"
+    ],
+  },
   // Frontend
   {
     files: ["frontend/**/*.{js,jsx}"],

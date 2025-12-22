@@ -99,7 +99,7 @@ const LoginPage = () => {
 
           <div className="text-center">
             <p className="text-base-content/60">
-              Don&apos;t have an account?{" "}
+              Don't have an account?{" "}
               <Link to="/signup" className="link link-primary">
                 Create account
               </Link>
@@ -110,7 +110,7 @@ const LoginPage = () => {
 
       {/* Right Side - Image/Pattern */}
       <AuthImagePattern
-        title={"I think its working CI/CD!"}
+        title={"checking CI/CD!"}
         subtitle={"Sign in to continue your conversations and catch up with your messages."}
       />
     </div>

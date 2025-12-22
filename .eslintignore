@@ -1,9 +1,0 @@
-# frontend build output
-frontend/dist
-frontend/build
-
-# backend build output (if any)
-backend/dist
-
-# dependencies
-node_modules
